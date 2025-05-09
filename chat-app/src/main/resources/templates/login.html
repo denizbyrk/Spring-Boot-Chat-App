@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/login-style.css">
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Username" required />
+        </div>
+
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required />
+        </div>
+
+        <button type="submit" class="login-button">Login</button>
+    </form>
+
+    <p>Don't have an account? <a th:href="@{/register}">Register</a></p>
+</div>
+
+<div th:if="${param.error}" style="color:red;">
+    Kullanıcı adı veya şifre hatalı!
+</div>
+<div th:if="${param.logout}" style="color:green;">
+    Başarıyla çıkış yapıldı!
+</div>
+
+</body>
+</html>

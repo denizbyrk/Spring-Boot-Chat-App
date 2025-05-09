@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Arkadaşlar Bul</title>
+    <link rel="stylesheet" href="/css/users-style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Arkadaş Bul</h2>
+
+    <div th:if="${message}" class="success-message">
+        <p th:text="${message}"></p>
+    </div>
+
+    <!-- Arama Kutusu -->
+    <form th:action="@{/users}" method="get" style="margin-bottom: 20px;">
+        <input type="text" name="search" placeholder="Kullanıcı ara..." th:value="${param.search}" />
+        <button type="submit">Ara</button>
+    </form>
+
+    <!-- Kullanıcı Listesi -->
+    <div th:if="${users.isEmpty()}">
+        <p>Hiç kullanıcı bulunamadı.</p>
+    </div>
+
+    <ul class="user-list" th:if="${!users.isEmpty()}">
+        <li th:each="user : ${users}">
+            <span th:text="${user.username}">Kullanıcı</span>
+
+            <!-- Eğer zaten arkadaşsa -->
+            <p th:if="${friends.contains(user)}" style="color: green;">✔ Zaten arkadaşsınız</p>
+
+            <!-- Eğer istek gönderilmişse -->
+            <p th:if="${pendingRequests.contains(user)}" style="color: orange;">🕓 İstek gönderildi</p>
+
+            <!-- Eğer ne arkadaş ne de istek varsa, buton göster -->
+            <form th:if="${!friends.contains(user)} and !${pendingRequests.contains(user)}"
+                  th:action="@{/friends/request}" method="post" style="display: inline;">
+                <input type="hidden" name="toUsername" th:value="${user.username}" />
+                <button type="submit" class="friend-request-button">Arkadaşlık İsteği Gönder</button>
+            </form>
+        </li>
+    </ul>
+
+    <!-- Navigasyon butonları -->
+    <div class="navigation-buttons">
+        <a href="/friends/list" class="nav-button">Arkadaşlarım</a>
+        <a href="/friends/pending" class="nav-button">Bekleyen İsteklerim</a>
+    </div>
+
+    <!-- Çıkış Yap -->
+    <form th:action="@{/logout}" method="post" style="margin-top: 30px;">
+        <button type="submit" class="logout-button">Çıkış Yap</button>
+    </form>
+
+</div>
+
+</body>
+</html>
