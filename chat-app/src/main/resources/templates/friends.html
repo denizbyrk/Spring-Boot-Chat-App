@@ -1,34 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Arkadaşlarım</title>
-    <link rel="stylesheet" href="/css/friends-style.css"> <!-- Ayrı CSS dosyasına bağlı -->
+	<title>Chatapp - Friends</title>
+	<link rel="stylesheet" href="/css/friends-style.css">
 </head>
+
 <body>
-<div class="container">
-    <h2>Arkadaşlarım</h2>
+	<div class="container">
+		<h2>My Friends</h2>
 
-    <ul class="friend-list" th:if="${!friends.isEmpty()}">
-        <li th:each="friend : ${friends}">
-         <div class="friend-actions">
-            <form th:action="@{/chat}" method="get">
-                <input type="hidden" name="with" th:value="${friend.id}" />
-                <button type="submit" class="chat-button" th:text="${friend.username}">Mesajlaş</button>
-            </form>
-            
-            <form th:action="@{/friends/remove}" method="post" style="display:inline;">
-              <input type="hidden" name="friendId" th:value="${friend.id}" />
-              <button type="submit" class="remove-button">Arkadaşlıktan Çıkar</button>
-            </form>
-            </div>
-        </li>
-    </ul>
+		<ul class="friend-list" th:if="${!friends.isEmpty()}">
+			<li th:each="friend : ${friends}">
+				<div class="friend-actions">
+					<form th:action="@{/chat}" method="get">
+						<input type="hidden" name="with" th:value="${friend.id}" />
+						<button type="submit" class="chat-button" th:text="${friend.username}">Message</button>
+					</form>
 
-    <div th:if="${friends.isEmpty()}" class="empty-message">
-        <p>Henüz bir arkadaşın yok.</p>
-    </div>
+					<form th:action="@{/friends/remove}" method="post" style="display:inline;">
+						<input type="hidden" name="friendId" th:value="${friend.id}" />
+						<button type="submit" class="remove-button">Remove friend</button>
+					</form>
+				</div>
+			</li>
+		</ul>
 
-    <a href="/users" class="back-button">↩ Kullanıcı Listesi</a>
-</div>
+		<div th:if="${friends.isEmpty()}" class="empty-message">
+			<p>Your friend list is empty.</p>
+		</div>
+
+		<a href="/users" class="back-button">↩ Messages</a>
+	</div>
 </body>
+
 </html>

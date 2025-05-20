@@ -1,12 +1,13 @@
-package com.chatapp.chat_backend.config;
+package com.chatapp.config;
 
-import com.chatapp.chat_backend.service.CustomUserDetailsService;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.chatapp.service.CustomUserDetailsService;
 
 @Configuration
 public class SecurityConfig {
@@ -16,7 +17,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/chat-websocket/**","/register", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -37,7 +38,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // 👇 bunu ekliyoruz
     @Bean
     public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService customUserDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

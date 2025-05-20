@@ -1,10 +1,11 @@
-package com.chatapp.chat_backend.service;
+package com.chatapp.service;
 
-import com.chatapp.chat_backend.model.User;
-import com.chatapp.chat_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
+
+import com.chatapp.model.User;
+import com.chatapp.repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,8 +20,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
-                .password(user.getPassword()) // Hash'li şifreyi buradan alacak
-                .roles("USER") // Rol verebilirsin basitçe
+                .password(user.getPassword())
+                .roles("USER")
                 .build();
     }
 }

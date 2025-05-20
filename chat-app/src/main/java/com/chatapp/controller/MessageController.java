@@ -1,15 +1,16 @@
-package com.chatapp.chat_backend.controller;
+package com.chatapp.controller;
 
-import com.chatapp.chat_backend.model.Message;
-import com.chatapp.chat_backend.model.User;
-import com.chatapp.chat_backend.service.MessageService;
-import com.chatapp.chat_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.chatapp.model.Message;
+import com.chatapp.model.User;
+import com.chatapp.service.MessageService;
+import com.chatapp.service.UserService;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class MessageController {
         model.addAttribute("receiver", otherUser);
         model.addAttribute("currentUser", currentUser);
 
-        return "chat"; // chat.html
+        return "chat";
     }
 
     @PostMapping("/send")
@@ -48,12 +49,25 @@ public class MessageController {
                                @AuthenticationPrincipal UserDetails userDetails) {
 
         User sender = userService.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         User receiver = userService.findById(receiverId);
 
         messageService.sendMessage(sender, receiver, content);
 
         return "redirect:/chat?with=" + receiverId;
+    }
+    
+    @GetMapping("/messages/{receiverId}")
+    @ResponseBody
+    public List<Message> getMessagesJson(@PathVariable Long receiverId,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+    	
+        User currentUser = userService.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User receiver = userService.findById(receiverId);
+
+        return messageService.getMessagesBetween(currentUser, receiver);
     }
 }

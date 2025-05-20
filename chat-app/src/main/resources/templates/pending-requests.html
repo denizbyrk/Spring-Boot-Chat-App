@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Gelen Arkadaşlık İstekleri</title>
-    <link rel="stylesheet" href="/css/friend-requests-style.css">
+	<title>Chatapp - Friend Requests</title>
+	<link rel="stylesheet" href="/css/friend-requests-style.css">
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Gelen Arkadaşlık İstekleri</h2>
+	<div class="container">
+		<h2>Friend Requests</h2>
 
-    <div th:if="${pendingRequests.isEmpty()}">
-        <p>Şu anda bekleyen bir arkadaşlık isteğiniz yok.</p>
-    </div>
+		<div th:if="${pendingRequests.isEmpty()}">
+			<p>You have no friend request.</p>
+		</div>
 
-    <div th:each="request : ${pendingRequests}" class="request-card">
-        <p th:text="'👤 ' + ${request.sender.username} + ' size arkadaşlık isteği gönderdi.'"></p>
+		<div th:each="request : ${pendingRequests}" class="request-card">
+			<p th:text="'👤 ' + ${request.sender.username} + ' size arkadaşlık isteği gönderdi.'"></p>
 
-        <form th:action="@{/friends/accept}" method="post" style="display:inline;">
-            <input type="hidden" name="requestId" th:value="${request.id}" />
-            <button type="submit" class="accept-button">✅ Kabul Et</button>
-        </form>
+			<form th:action="@{/friends/accept}" method="post" style="display:inline;">
+				<input type="hidden" name="requestId" th:value="${request.id}" />
+				<button type="submit" class="accept-button">✅ Accept</button>
+			</form>
 
-        <form th:action="@{/friends/decline}" method="post" style="display:inline; margin-left:10px;">
-            <input type="hidden" name="requestId" th:value="${request.id}" />
-            <button type="submit" class="decline-button">❌ Reddet</button>
-        </form>
-    </div>
+			<form th:action="@{/friends/decline}" method="post" style="display:inline; margin-left:10px;">
+				<input type="hidden" name="requestId" th:value="${request.id}" />
+				<button type="submit" class="decline-button">❌ Decline</button>
+			</form>
+		</div>
 
-    <div style="margin-top: 20px;">
-        <a href="/users" class="back-button">← Kullanıcı Listesine Dön</a>
-    </div>
-</div>
+		<div style="margin-top: 20px;">
+			<a href="/users" class="back-button">← Return to home</a>
+		</div>
+	</div>
 
 </body>
+
 </html>

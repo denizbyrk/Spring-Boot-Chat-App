@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-/* Genel ayarlar */
 body {
     background-color: #f0f2f5;
     font-family: Arial, sans-serif;
@@ -11,7 +10,6 @@ body {
     margin: 0;
 }
 
-/* Register kutusu */
 .container {
     background-color: white;
     padding: 40px;
@@ -21,20 +19,17 @@ body {
     text-align: center;
 }
 
-/* Başlık */
 .container h2 {
     margin-bottom: 25px;
     color: #333;
 }
 
-/* Form grup */
 form div, label {
     margin-bottom: 10px;
     font-weight: bold;
     text-align: left;
 }
 
-/* Inputlar */
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -46,7 +41,6 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
-/* Buton */
 button {
     background-color: #28a745;
     color: white;
@@ -59,12 +53,10 @@ button {
     cursor: pointer;
 }
 
-/* Buton hover */
 button:hover {
     background-color: #218838;
 }
 
-/* Alt yazı */
 div a {
     color: #007bff;
     font-size: 14px;

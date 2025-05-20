@@ -1,10 +1,4 @@
-package com.chatapp.chat_backend.controller;
-
-import com.chatapp.chat_backend.model.FriendRequest;
-import com.chatapp.chat_backend.model.User;
-import com.chatapp.chat_backend.repository.UserRepository;
-import com.chatapp.chat_backend.service.FriendRequestService;
-import com.chatapp.chat_backend.service.UserService;
+package com.chatapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,6 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.chatapp.model.FriendRequest;
+import com.chatapp.model.User;
+import com.chatapp.repository.UserRepository;
+import com.chatapp.service.FriendRequestService;
+import com.chatapp.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
@@ -30,23 +30,23 @@ public class FriendRequestController {
     private UserService userService;
 
     @Autowired
-    private UserRepository userRepository; // eksikti
+    private UserRepository userRepository;
 
     @PostMapping("/request")
     public String sendFriendRequest(@RequestParam String toUsername, RedirectAttributes redirectAttributes) {
+    	
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String senderUsername = authentication.getName();
 
         User sender = userRepository.findByUsername(senderUsername)
-                .orElseThrow(() -> new RuntimeException("Gönderen kullanıcı bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
 
         User receiver = userRepository.findByUsername(toUsername)
-                .orElseThrow(() -> new RuntimeException("Alıcı kullanıcı bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-        // İsteği service üzerinden gönderiyoruz
         friendRequestService.sendFriendRequest(sender, receiver);
 
-        redirectAttributes.addFlashAttribute("message", "✅ Arkadaşlık isteği gönderildi!");
+        redirectAttributes.addFlashAttribute("message", "✅ Friend request sent!");
 
         return "redirect:/users";
     }
@@ -56,25 +56,29 @@ public class FriendRequestController {
         User currentUser = userService.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
-        // Sadece status = "PENDING" olanları al
         List<FriendRequest> pendingRequests = friendRequestService.findPendingForUser(currentUser);
         model.addAttribute("pendingRequests", pendingRequests);
         model.addAttribute("currentUser", currentUser);
-        return "pending-requests"; // pending-requests.html
+        
+        return "pending-requests";
     }
 
 
     @PostMapping("/accept")
     public String acceptFriendRequest(@RequestParam("requestId") Long requestId) {
+    	
         FriendRequest request = friendRequestService.findById(requestId);
         friendRequestService.acceptRequest(request);
+        
         return "redirect:/friends/pending";
     }
 
     @PostMapping("/decline")
     public String declineFriendRequest(@RequestParam("requestId") Long requestId) {
+    	
         FriendRequest request = friendRequestService.findById(requestId);
         friendRequestService.declineRequest(request);
+        
         return "redirect:/friends/pending";
     }
     
@@ -82,9 +86,11 @@ public class FriendRequestController {
     public String removeFriend(@RequestParam("friendId") Long friendId,
                                Principal principal,
                                RedirectAttributes redirectAttributes) {
+    	
         String currentUsername = principal.getName();
         userService.removeFriendship(currentUsername, friendId);
-        redirectAttributes.addFlashAttribute("message", "Arkadaşlıktan çıkarıldı.");
+        redirectAttributes.addFlashAttribute("message", "Removed from friend list.");
+        
         return "redirect:/friends/list";
     }
 }

@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Kayıt Ol</title>
-    <link rel="stylesheet" href="/css/register-style.css">
+	<title>Chatapp - Register</title>
+	<link rel="stylesheet" href="/css/login-style.css">
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Kayıt Ol</h2>
+	<div class="container">
+		<h2>Register</h2>
 
-    <form th:action="@{/register}" method="post">
-    <label>Kullanıcı Adı:</label>
-    <input type="text" name="username" required />
+		<form th:action="@{/register}" method="post">
 
-    <label>Email:</label>
-    <input type="email" name="email" required />
+			<div class="form-group">
+				<input type="text" placeholder="Username" name="username" required />
+			</div>
 
-    <label>Şifre:</label>
-    <input type="password" name="password" required />
+			<div class="form-group">
+				<input type="email" placeholder="Email" name="email" required />
+			</div>
+			<div class="form-group">
+				<input type="password" placeholder="Password" name="password" required />
+			</div>
 
-    <button type="submit">Kayıt Ol</button>
-</form>
+			<button type="submit" class="login-button">Create Account</button>
+		</form>
 
-    <div style="margin-top: 20px;">
-        <a href="/login">Zaten hesabın var mı? Giriş Yap</a>
-    </div>
-</div>
+		<div style="margin-top: 20px;">
+			<p>Already have an account? <a th:href="@{/login}">Login</a></p>
+		</div>
+	</div>
 
 </body>
+
 </html>
