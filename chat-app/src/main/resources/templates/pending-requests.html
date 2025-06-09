@@ -1,39 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
 <head>
-	<title>Chatapp - Friend Requests</title>
-	<link rel="stylesheet" href="/css/friend-requests-style.css">
+	<meta charset="UTF-8">
+	<title>Friend Requests</title>
+	<link rel="icon" type="image/png" sizes="128x128" th:href="@{/logo/logoSM.png}">
+	<link rel="stylesheet" href="/css/friend-request-style.css">
 </head>
 
 <body>
-
-	<div class="container">
-		<h2>Friend Requests</h2>
-
-		<div th:if="${pendingRequests.isEmpty()}">
-			<p>You have no friend request.</p>
+	<header>
+		<div class="logo">
+			<img src="/logo/logo.png" alt="Logo" style="width: 75px; height: auto;">
+			<label>ChatApp</label>
 		</div>
+		<h2>Friend Request Page</h2>
+	</header>
 
+	<div th:if="${pendingRequests.isEmpty()}">
+		<p style="text-align: center; margin-top: 20px; font-size: 24px;">You have no pending requests.</p>
+	</div>
+
+	<div class="request-list">
 		<div th:each="request : ${pendingRequests}" class="request-card">
-			<p th:text="'👤 ' + ${request.sender.username} + ' size arkadaşlık isteği gönderdi.'"></p>
+			<p th:text="'👤 ' + ${request.sender.username} + ' sent you a friend request.'"></p>
 
 			<form th:action="@{/friends/accept}" method="post" style="display:inline;">
 				<input type="hidden" name="requestId" th:value="${request.id}" />
-				<button type="submit" class="accept-button">✅ Accept</button>
+				<button type="submit" class="btn btn-accept">Accept</button>
 			</form>
-
-			<form th:action="@{/friends/decline}" method="post" style="display:inline; margin-left:10px;">
+			<form th:action="@{/friends/decline}" method="post" style="display:inline;">
 				<input type="hidden" name="requestId" th:value="${request.id}" />
-				<button type="submit" class="decline-button">❌ Decline</button>
+				<button type="submit" class="btn btn-reject">Reject</button>
 			</form>
-		</div>
-
-		<div style="margin-top: 20px;">
-			<a href="/users" class="back-button">← Return to home</a>
 		</div>
 	</div>
 
+	<footer>
+		<a href="/messages" class="footer-btn">Messages</a>
+	</footer>
 </body>
 
 </html>

@@ -1,6 +1,5 @@
 package com.chatapp.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.chatapp.model.FriendRequest;
@@ -12,8 +11,12 @@ import java.util.List;
 @Service
 public class FriendRequestService {
 
-    @Autowired
-    private FriendRequestRepository friendRequestRepository;
+    private final FriendRequestRepository friendRequestRepository;
+    
+    public FriendRequestService(FriendRequestRepository friendRequestRepository) {
+    	
+    	this.friendRequestRepository = friendRequestRepository;
+    }
 
     public FriendRequest sendFriendRequest(User sender, User receiver) {
     	
@@ -35,8 +38,8 @@ public class FriendRequestService {
     	
         List<FriendRequest> sent = friendRequestRepository.findBySenderAndStatus(user, "ACCEPTED");
         List<FriendRequest> received = friendRequestRepository.findByReceiverAndStatus(user, "ACCEPTED");
-        sent.addAll(received);
         
+        sent.addAll(received);
         return sent;
     }
 
@@ -66,4 +69,11 @@ public class FriendRequestService {
     	
         return friendRequestRepository.findByReceiverAndStatus(receiver, "PENDING");
     }
+    
+    public boolean isRequestAlreadySent(User sender, User receiver) {
+    	
+        return friendRequestRepository.existsBySenderAndReceiverAndStatusNot(sender, receiver, "REJECTED")
+            || friendRequestRepository.existsBySenderAndReceiverAndStatusNot(receiver, sender, "REJECTED");
+    }
+
 }

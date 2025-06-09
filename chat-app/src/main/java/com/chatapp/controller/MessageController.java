@@ -1,6 +1,5 @@
 package com.chatapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -18,19 +17,23 @@ import java.util.List;
 @RequestMapping("/chat")
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    
+    public MessageController(MessageService messageService, UserService userService) {
+    	
+    	this.messageService = messageService;
+    	this.userService = userService;
+    }
 
     @GetMapping
     public String chatPage(@RequestParam("with") Long withUserId,
                             @AuthenticationPrincipal UserDetails userDetails,
                             Model model) {
 
-        User currentUser = userService.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+        User currentUser = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         User otherUser = userService.findById(withUserId);
 
@@ -48,7 +51,7 @@ public class MessageController {
                                @RequestParam("content") String content,
                                @AuthenticationPrincipal UserDetails userDetails) {
 
-        User sender = userService.findByUsername(userDetails.getUsername())
+        User sender = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         User receiver = userService.findById(receiverId);
@@ -63,11 +66,12 @@ public class MessageController {
     public List<Message> getMessagesJson(@PathVariable Long receiverId,
                                          @AuthenticationPrincipal UserDetails userDetails) {
     	
-        User currentUser = userService.findByUsername(userDetails.getUsername())
+        User currentUser = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         User receiver = userService.findById(receiverId);
 
         return messageService.getMessagesBetween(currentUser, receiver);
     }
+  
 }

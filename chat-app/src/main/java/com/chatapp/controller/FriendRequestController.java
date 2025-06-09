@@ -1,6 +1,5 @@
 package com.chatapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,43 +17,66 @@ import com.chatapp.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/friends")
 public class FriendRequestController {
 
-    @Autowired
-    private FriendRequestService friendRequestService;
+    private final FriendRequestService friendRequestService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    
+    public FriendRequestController(FriendRequestService friendRequestService, UserService userService, UserRepository userRepository) {
+    	
+    	this.friendRequestService = friendRequestService;
+    	this.userService = userService;
+    	this.userRepository = userRepository;
+    }
 
     @PostMapping("/request")
-    public String sendFriendRequest(@RequestParam String toUsername, RedirectAttributes redirectAttributes) {
+    public String sendFriendRequest(@RequestParam Long toUserId, RedirectAttributes redirectAttributes) {
     	
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String senderUsername = authentication.getName();
 
-        User sender = userRepository.findByUsername(senderUsername)
+        User sender = userRepository.findByEmail(senderUsername)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 
-        User receiver = userRepository.findByUsername(toUsername)
-                .orElseThrow(() -> new RuntimeException("Receiver not found"));
+        Optional<User> optionalReceiver = userRepository.findById(toUserId);
+        
+        if (optionalReceiver.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "❌ User not found for ID: " + toUserId);
+            return "redirect:/friends/list";
+        }
+
+        User receiver = optionalReceiver.get();
+
+        if (sender.getId().equals(receiver.getId())) {
+        	
+            redirectAttributes.addFlashAttribute("error", "❌ You cannot send a friend request to yourself!");
+            return "redirect:/friends/list";
+        }
+
+        if (friendRequestService.isRequestAlreadySent(sender, receiver)) {
+        	
+            redirectAttributes.addFlashAttribute("error", "❌ Friend request already sent or pending/accepted.");
+            return "redirect:/friends/list";
+        }
 
         friendRequestService.sendFriendRequest(sender, receiver);
 
-        redirectAttributes.addFlashAttribute("message", "✅ Friend request sent!");
-
-        return "redirect:/users";
+        redirectAttributes.addFlashAttribute("message", "✅ Friend request sent to user ID " + toUserId + "!");
+        return "redirect:/friends/list";
     }
 
     @GetMapping("/pending")
     public String viewPendingRequests(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userService.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+    	
+        User currentUser = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<FriendRequest> pendingRequests = friendRequestService.findPendingForUser(currentUser);
         model.addAttribute("pendingRequests", pendingRequests);
@@ -62,8 +84,6 @@ public class FriendRequestController {
         
         return "pending-requests";
     }
-
-
     @PostMapping("/accept")
     public String acceptFriendRequest(@RequestParam("requestId") Long requestId) {
     	

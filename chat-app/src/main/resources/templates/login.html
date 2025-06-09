@@ -2,25 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Chatapp - Login</title>
+	<title>Login</title>
+	<link rel="icon" type="image/png" sizes="128x128" th:href="@{/logo/logoSM.png}">
 	<link rel="stylesheet" href="/css/login-style.css">
 </head>
 
 <body>
 
+	<div class="top-left-logo">
+		<img src="/logo/logo.png" alt="Logo">
+		<label>ChatApp</label>
+	</div>
+
+
 	<div class="container">
 		<h2>Login</h2>
-		
+
 		<div th:if="${param.error}" class="error">
 			Invalid credentials!
 		</div>
-		<div th:if="${param.logout}" style="color:green;">
+		<div th:if="${param.logout}" class="error" style="color:rgb(0, 0, 255);">
 			Logout successful!
 		</div>
-		
+		<div th:if="${param.accountDeleted}" style="color:green;">
+			Account deleted successfully!
+		</div>
+
 		<form th:action="@{/login}" method="post">
 			<div class="form-group">
-				<input type="text" name="username" placeholder="Username or Email" required />
+				<input type="text" name="username" placeholder="Email" required />
 			</div>
 
 			<div class="form-group">

@@ -2,17 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Chatapp - Register</title>
+	<title>Register</title>
+	<link rel="icon" type="image/png" sizes="128x128" th:href="@{/logo/logoSM.png}">
 	<link rel="stylesheet" href="/css/login-style.css">
 </head>
 
 <body>
 
+	<div class="top-left-logo">
+		<img src="/logo/logo.png" alt="Logo">
+		<label>ChatApp</label>
+	</div>
+
+
 	<div class="container">
 		<h2>Register</h2>
 
-		<form th:action="@{/register}" method="post">
+		<div th:if="${error}" class="error-message" th:text="${error}"></div>
 
+		<form th:action="@{/register}" method="post">
 			<div class="form-group">
 				<input type="text" placeholder="Username" name="username" required />
 			</div>
